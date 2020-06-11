@@ -1,1 +1,1 @@
-worker: python betty.py
+web: python betty.py
