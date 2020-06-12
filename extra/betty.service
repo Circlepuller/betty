@@ -1,0 +1,12 @@
+[Unit]
+Description=Betty the anime/manga Discord bot
+After=network.target
+
+[Service]
+User=your-user
+WorkingDirectory=/path/to/betty
+ExecStart=/path/to/betty/venv/bin/python betty.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
