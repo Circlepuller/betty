@@ -5,7 +5,7 @@ from disputils import BotEmbedPaginator
 from jikanpy import AioJikan, APIException
 from operator import itemgetter
 
-from .messages import *
+from .messages import DESCRIPTION_MESSAGE, ERROR_MESSAGE
 from .util import is_na
 
 bot = Bot(
@@ -15,9 +15,11 @@ bot = Bot(
     activity=discord.Activity(type=discord.ActivityType.watching, name='anime'),
 )
 
+
 @bot.event
 async def on_ready():
     print('Bot connected!')
+
 
 @bot.command(help='Retrieves scheduled anime for a day of the week')
 async def schedule(ctx, day=datetime.utcnow().strftime('%A').lower()):
@@ -34,12 +36,14 @@ async def schedule(ctx, day=datetime.utcnow().strftime('%A').lower()):
     for result in sorted_results:
         e = discord.Embed(title=result['title'], description=is_na(result['synopsis']), url=result['url'])
         e.set_thumbnail(url=result['image_url'])
-        e.set_footer(text=f"{result['type']} | Score: {is_na(result['score'], float)} | {result['members']} members | Episodes: {is_na(result['episodes'], int)} | {result['rating']}")
+        e.set_footer(text=f"""{result['type']} | Score: {is_na(result['score'], float)} | \
+{result['members']} members | Episodes: {is_na(result['episodes'], int)} | {result['rating']}""")
         embeds.append(e)
 
     paginator = BotEmbedPaginator(ctx, embeds)
     await paginator.run()
-    
+
+
 @bot.command(help='Searches for anime and manga based on a given term')
 async def search(ctx, query, category='anime'):
     async with AioJikan() as client:
@@ -48,12 +52,17 @@ async def search(ctx, query, category='anime'):
         except APIException:
             await ctx.send(ERROR_MESSAGE)
             return
-    
+
     sorted_results = sorted(response['results'], key=itemgetter('members'), reverse=True)
     embeds = []
 
     for result in sorted_results:
-        e = discord.Embed(title=result['title'], description=is_na(result['synopsis']), url=result['url'], timestamp=datetime.fromisoformat(result['start_date']))
+        e = discord.Embed(
+            title=result['title'],
+            description=is_na(result['synopsis']),
+            url=result['url'],
+            timestamp=datetime.fromisoformat(result['start_date'])
+        )
         e.set_thumbnail(url=result['image_url'])
 
         footer = f"{result['type']} | Score: {is_na(result['score'], float)} | {result['members']} members"
@@ -67,6 +76,7 @@ async def search(ctx, query, category='anime'):
 
     paginator = BotEmbedPaginator(ctx, embeds)
     await paginator.run()
+
 
 @bot.command(help='Retrieve a list of top anime and manga')
 async def top(ctx, mtype='anime', subtype=None):

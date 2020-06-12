@@ -52,3 +52,13 @@ Heroku
 Alternatively, you can deploy Betty to Heroku via the provided ``Procfile`` and ``runtime.txt``. Be aware that Heroku's
 free plan will sleep the bot process if Betty's web frontend is not accessed every hour. Make sure to set ``BOT_TOKEN``
 in your app's configuration. Support for Heroku will likely be removed in the future.
+
+Testing
+-------
+
+Testing Betty is simple:
+
+.. code: sh
+
+    pip install pytest
+    python -m pytest ./tests/

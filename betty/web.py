@@ -5,6 +5,7 @@ from os import environ
 
 from .bot import bot
 
+
 class WebApp(Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -23,5 +24,6 @@ class WebApp(Cog):
 
     def cog_unload(self):
         ensure_future(self.server.stop)
+
 
 app = WebApp(bot)
